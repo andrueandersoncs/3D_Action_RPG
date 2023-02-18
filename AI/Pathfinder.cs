@@ -6,7 +6,7 @@ namespace AI
 {
     public class Pathfinder : MonoBehaviour
     {
-        private static LayerMask obstacleLayer;
+        private static LayerMask _obstacleLayer;
 
         public float speed;
         public Vector3 velocity;
@@ -17,95 +17,68 @@ namespace AI
         [SerializeField] private Vector3Int _node;
         [SerializeField] private Vector3 _destination;
         
-        private const float spherecastRadius = 0.5f;
-        private const float spherecastDistance = 1f;
+        private const float SpherecastRadius = 0.25f;
+        private const float SpherecastDistance = 0.5f;
         
         private void OnEnable()
         {
-            obstacleLayer = LayerMask.GetMask("PathfindingObstacle");
+            _obstacleLayer = LayerMask.GetMask("PathfindingObstacle");
         }
 
-        private List<Vector3Int> GetBlockedPositionsNearPositionSpherecast(Vector3Int position)
+        private List<Vector3Int> GetBlockedNeighborsFromPosition(Vector3Int position)
         {
             var obstacles = new List<Vector3Int>();
             var colliders = new List<Collider>();
 
-            // IMPORTANT: don't forget to check if the position itself is blocked with this method
-            // spherecast doesn't work if the origin is inside the collider
-            foreach (var neighborDirection in PathfindingModule.StandardNeighboringPositions)
-            {
-                var numObstacles = Physics.SphereCastNonAlloc(
-                    position + neighborDirection,
-                    spherecastRadius,
-                    -neighborDirection,
-                    _spherecastResults,
-                    spherecastDistance,
-                    obstacleLayer
-                );
-                var selfBlocked = false;
-                for (var o = 0; o < numObstacles; o++)
-                {
-                    var result = _spherecastResults[o];
-                    if (result.collider.transform.IsChildOf(transform) || result.collider.transform == transform) continue;
-                    selfBlocked = true;
-                    colliders.Add(result.collider);
-                }
-                if (selfBlocked) obstacles.Add(position);
-            }
-            
+            // Sphere-casting from position to neighbors to check if they're blocked
             foreach (var neighborDirection in PathfindingModule.StandardNeighboringPositions)
             {
                 var numObstacles = Physics.SphereCastNonAlloc(
                     position,
-                    spherecastRadius,
-                    neighborDirection,
+                    SpherecastRadius,
+                    Vector3.Normalize(neighborDirection),
                     _spherecastResults,
-                    spherecastDistance,
-                    obstacleLayer
+                    SpherecastDistance,
+                    _obstacleLayer
                 );
                 for (var o = 0; o < numObstacles; o++)
                 {
                     var result = _spherecastResults[o];
-                    if (result.collider.transform.IsChildOf(transform) || result.collider.transform == transform) continue;
+                    
+                    if (
+                        result.collider.transform.IsChildOf(transform)
+                        || result.collider.transform == transform
+                    ) continue;
+                    
                     obstacles.Add(position + neighborDirection);
                     colliders.Add(result.collider);
+                    
+                    // If the neighbor is not blocked, check if the position itself is blocked
+                    var numSelfObstacles = Physics.SphereCastNonAlloc(
+                        position + neighborDirection,
+                        SpherecastRadius,
+                        -Vector3.Normalize(neighborDirection),
+                        _spherecastResults,
+                        SpherecastDistance,
+                        _obstacleLayer
+                    );
+                    for (var selfCheckIterator = 0; selfCheckIterator < numSelfObstacles; selfCheckIterator++)
+                    {
+                        var selfCheckResult = _spherecastResults[selfCheckIterator];
+                        
+                        if (
+                            selfCheckResult.collider.transform.IsChildOf(transform)
+                            || selfCheckResult.collider.transform == transform
+                        ) continue;
+                        
+                        obstacles.Add(position);
+                        colliders.Add(selfCheckResult.collider);
+                    }
                 }
             }
 
             return obstacles;
         }
-        
-        // private List<Vector3Int> GetBlockedPositionsNearPosition(Vector3Int position)
-        // {
-        //     var numObstacles = Physics.OverlapSphereNonAlloc(position, 5f, _obstacleColliders, obstacleLayer);
-        //     
-        //     var obstacles = new List<Vector3Int>();
-        //             
-        //     for (var i = 0; i < numObstacles; i++)
-        //     {
-        //         var collider = _obstacleColliders[i];
-        //
-        //         // The collider in question is actually on the child, not this object..
-        //         if (collider.transform.IsChildOf(transform) || collider.transform == transform) continue;
-        //
-        //         // Find all positions that collide with this collider, iterate by 1f outward from the collider position
-        //         var bounds = collider.bounds;
-        //         var min = bounds.min;
-        //         var max = bounds.max;
-        //         for (var x = min.x; x <= max.x; x++)
-        //         {
-        //             for (var z = min.z; z <= max.z; z++)
-        //             {
-        //                 var roundedX = Mathf.RoundToInt(x);
-        //                 var roundedZ = Mathf.RoundToInt(z);
-        //                 var boundsPosition = new Vector3Int(roundedX, 0, roundedZ);
-        //                 obstacles.Add(boundsPosition);
-        //             }
-        //         }
-        //     }
-        //
-        //     return obstacles;
-        // }
 
         public List<Vector3Int> SetDestination(Vector3 destination)
         {
@@ -127,10 +100,10 @@ namespace AI
                 transformPosition,
                 destinationPosition,
                 (a, b) => Mathf.Pow(b.x - a.x, 2f) + Mathf.Pow(b.z - a.z, 2f),
-                GetBlockedPositionsNearPositionSpherecast
+                GetBlockedNeighborsFromPosition
             );
 
-            if (path.Contains(transformPosition))
+            if (path != null && path.Contains(transformPosition))
             {
                 path.Remove(transformPosition);
             }
@@ -140,6 +113,8 @@ namespace AI
 
         public IEnumerator WalkPath(List<Vector3Int> path)
         {
+            if (path == null) yield break;
+            
             while (path.Count > 0)
             {
                 var node = path[0];
@@ -148,16 +123,25 @@ namespace AI
                 
                 while (Vector3.Distance(transform.position, node) > 0.1f)
                 {
+                    var transformPosition = transform.position;
+                    
                     // If the node becomes blocked, recalculate the path
-                    var blockedPositions = GetBlockedPositionsNearPositionSpherecast(node);
-                    if (blockedPositions.Contains(node))
+                    var numObstacles = Physics.SphereCastNonAlloc(
+                        transformPosition,
+                        SpherecastRadius,
+                        Vector3.Normalize(node - transformPosition),
+                        _spherecastResults,
+                        SpherecastDistance,
+                        _obstacleLayer
+                    );
+                    for (var o = 0; o < numObstacles; o++)
                     {
+                        var result = _spherecastResults[o];
+                        if (result.collider.transform.IsChildOf(transform) || result.collider.transform == transform) continue;
                         path = SetDestination(_destination);
-                        break;
                     }
                     
-                    // Otherwise, move to the next node
-                    var transformPosition = transform.position;
+                    // Otherwise, move toward the node
                     var target = new Vector3(node.x, transformPosition.y, node.z);
                     _target = target;
                     

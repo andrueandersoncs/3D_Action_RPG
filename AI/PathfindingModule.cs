@@ -7,7 +7,7 @@ namespace AI
 {
     public static class PathfindingModule
     {
-        public static Vector3Int[] StandardNeighboringPositions;
+        public static readonly Vector3Int[] StandardNeighboringPositions;
 
         static PathfindingModule()
         {
@@ -23,8 +23,7 @@ namespace AI
             };
         }
 
-        private static IEnumerable<Vector3Int> GetNeighboringPositions(this Vector3Int position,
-            List<Vector3Int> blockedPositions)
+        private static IEnumerable<Vector3Int> GetNeighboringPositions(this Vector3Int position, ICollection<Vector3Int> blockedPositions)
         {
             var neighboringPositions = new List<Vector3Int>();
             
@@ -39,8 +38,7 @@ namespace AI
         }
             
 
-        private static float GetCost(this Vector3Int a, Vector3Int b) =>
-            Mathf.Pow(b.x - a.x, 2f) + Mathf.Pow(b.z - a.z, 2f);
+        private static float GetCost(this Vector3Int a, Vector3Int b) => Mathf.Pow(b.x - a.x, 2f) + Mathf.Pow(b.z - a.z, 2f);
 
         private static List<Vector3Int> ReconstructPath(IReadOnlyDictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int current)
         {
@@ -55,6 +53,24 @@ namespace AI
             return totalPath;
         }
 
+        private static Vector3Int FindNewGoal(
+            Vector3Int start,
+            Vector3Int goal,
+            List<Vector3Int> blockedPositions,
+            Func<Vector3Int, List<Vector3Int>> getBlockedPositionsNearPosition
+        )
+        {
+            while (blockedPositions.Contains(goal))
+            {
+                var neighboringPositions = goal.GetNeighboringPositions(blockedPositions);
+                var closestToStart = neighboringPositions.OrderBy(position => Vector3Int.Distance(position, start));
+                var closestToGoal = closestToStart.ThenBy(position => Vector3Int.Distance(position, goal)); 
+                goal = closestToGoal.First();
+                blockedPositions.AddRange(getBlockedPositionsNearPosition(goal));
+            }
+            return goal;
+        }
+
         public static List<Vector3Int> AStar(
             Vector3Int start,
             Vector3Int goal,
@@ -62,15 +78,11 @@ namespace AI
             Func<Vector3Int, List<Vector3Int>> getBlockedPositionsNearPosition
         )
         {
-            if (getBlockedPositionsNearPosition(goal).Contains(goal))
+            var blockedPositionsNearGoal = getBlockedPositionsNearPosition(goal);
+            if (blockedPositionsNearGoal.Contains(goal))
             {
                 // Find the goal's neighbor closest to start and move there instead
-                var newGoal = goal
-                    .GetNeighboringPositions(getBlockedPositionsNearPosition(goal))
-                    .OrderBy(position => Vector3Int.Distance(position, start))
-                    .ThenBy(position => Vector3Int.Distance(position, goal))
-                    .First();
-                
+                var newGoal = FindNewGoal(start, goal, blockedPositionsNearGoal, getBlockedPositionsNearPosition);
                 return AStar(start, newGoal, h, getBlockedPositionsNearPosition);
             }
             
