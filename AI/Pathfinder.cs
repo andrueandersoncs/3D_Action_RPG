@@ -159,9 +159,25 @@ namespace AI
                 {
                     var transformPosition = transform.position;
 
+                    // Check the node for obstacles
                     var numObstacles = Physics.OverlapSphereNonAlloc(
                         node,
-                        SpherecastRadius,
+                        SpherecastRadius * 2f,
+                        _obstacleColliders,
+                        _obstacleLayer
+                    );
+                    for (var o = 0; o < numObstacles; o++)
+                    {
+                        var collider = _obstacleColliders[o];
+                        if (ColliderIsChild(collider, transform)) continue;
+                        path = SetDestination(_destination);
+                        break;
+                    }
+                    
+                    // Check our current position to make sure we're not stepping on an obstacle
+                    numObstacles = Physics.OverlapSphereNonAlloc(
+                        transformPosition,
+                        SpherecastRadius * 2f,
                         _obstacleColliders,
                         _obstacleLayer
                     );

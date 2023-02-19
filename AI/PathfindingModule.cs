@@ -28,16 +28,6 @@ namespace AI
             return StandardNeighboringPositions
                 .Select(neighborOffset => position + neighborOffset)
                 .Where(neighborPosition => !blockedPositions.Contains(neighborPosition));
-            // var neighboringPositions = new List<Vector3Int>();
-            //
-            // foreach (var neighborOffset in StandardNeighboringPositions)
-            // {
-            //     var neighborPosition = position + neighborOffset;
-            //     if (blockedPositions.Contains(neighborPosition)) continue;
-            //     neighboringPositions.Add(neighborPosition);
-            // }
-            //
-            // return neighboringPositions;
         }
             
 
@@ -56,49 +46,6 @@ namespace AI
             return totalPath;
         }
 
-        private static Vector3Int FindNewGoal(
-            Vector3Int start,
-            Vector3Int goal,
-            List<Vector3Int> blockedPositions,
-            Func<Vector3Int, List<Vector3Int>> getBlockedPositionsNearPosition
-        )
-        {
-            // var neighboringPositions = goal.GetNeighboringPositions(blockedPositions);
-            // foreach (var neighboringPosition in neighboringPositions)
-            // {
-            //     var goalPrim = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            //     goalPrim.transform.localScale = Vector3.one * 0.25f;
-            //     goalPrim.transform.position = neighboringPosition;    
-            // }
-
-            var nextGoal = goal
-                .GetNeighboringPositions(blockedPositions)
-                .OrderBy(position => Vector3Int.Distance(position, goal))
-                .ThenBy(position => Vector3Int.Distance(position, start))
-                .First();
-            
-            if (getBlockedPositionsNearPosition(nextGoal).Contains(nextGoal))
-            { 
-                return nextGoal
-                    .GetNeighboringPositions(blockedPositions)
-                    .OrderBy(position => Vector3Int.Distance(position, goal))
-                    .ThenBy(position => Vector3Int.Distance(position, start))
-                    .First();
-            }
-            
-            return nextGoal;
-            
-            // while (blockedPositions.Contains(goal))
-            // {
-            //     var neighboringPositions = goal.GetNeighboringPositions(blockedPositions);
-            //     var closestToStart = neighboringPositions.OrderBy(position => Vector3Int.Distance(position, start));
-            //     var closestToGoal = closestToStart.ThenBy(position => Vector3Int.Distance(position, goal)); 
-            //     goal = closestToGoal.First();
-            //     blockedPositions.AddRange(getBlockedPositionsNearPosition(goal));
-            // }
-            // return goal;
-        }
-
         public static List<Vector3Int> AStar(
             Vector3Int start,
             Vector3Int goal,
@@ -106,12 +53,24 @@ namespace AI
             Func<Vector3Int, List<Vector3Int>> getBlockedPositionsNearPosition
         )
         {
-            var blockedPositionsNearGoal = getBlockedPositionsNearPosition(goal);
-            if (blockedPositionsNearGoal.Contains(goal))
+            var toStart = start - goal;
+            var directionToStart = ((Vector3)toStart).normalized;
+            var v3IntDirectionToStart = new Vector3Int(
+                Mathf.RoundToInt(directionToStart.x),
+                Mathf.RoundToInt(directionToStart.y),
+                Mathf.RoundToInt(directionToStart.z)
+            );
+            
+            while (getBlockedPositionsNearPosition(goal).Contains(goal))
             {
-                // Find the goal's neighbor closest to start and move there instead
-                var newGoal = FindNewGoal(start, goal, blockedPositionsNearGoal, getBlockedPositionsNearPosition);
-                return AStar(start, newGoal, h, getBlockedPositionsNearPosition);
+                if (v3IntDirectionToStart == Vector3Int.zero) break;
+
+                if (start == goal)
+                {
+                    return new List<Vector3Int> { goal };
+                }
+                    
+                goal += v3IntDirectionToStart;
             }
             
             if (start.GetNeighboringPositions(getBlockedPositionsNearPosition(goal)).Contains(goal))
