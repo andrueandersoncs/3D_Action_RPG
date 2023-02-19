@@ -53,24 +53,19 @@ namespace AI
             Func<Vector3Int, List<Vector3Int>> getBlockedPositionsNearPosition
         )
         {
-            var toStart = start - goal;
-            var directionToStart = ((Vector3)toStart).normalized;
-            var v3IntDirectionToStart = new Vector3Int(
-                Mathf.RoundToInt(directionToStart.x),
-                Mathf.RoundToInt(directionToStart.y),
-                Mathf.RoundToInt(directionToStart.z)
-            );
-            
+            if (!start.GetNeighboringPositions(getBlockedPositionsNearPosition(start)).Any())
+            {
+                return null;
+            }
+                
             while (getBlockedPositionsNearPosition(goal).Contains(goal))
             {
-                if (v3IntDirectionToStart == Vector3Int.zero) break;
-
-                if (start == goal)
-                {
-                    return new List<Vector3Int> { goal };
-                }
-                    
-                goal += v3IntDirectionToStart;
+                goal =
+                    goal
+                    .GetNeighboringPositions(getBlockedPositionsNearPosition(goal))
+                    .OrderBy(point => start.GetCost(point))
+                    .ThenBy(point => goal.GetCost(point))
+                    .First();
             }
             
             if (start.GetNeighboringPositions(getBlockedPositionsNearPosition(goal)).Contains(goal))

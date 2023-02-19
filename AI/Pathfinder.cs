@@ -24,53 +24,7 @@ namespace AI
         private void OnEnable()
         {
             _obstacleLayer = LayerMask.GetMask("PathfindingObstacle");
-
-            // var prim = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            // prim.transform.position = new Vector3(0, 200f, 0);
-            
-            // var prim = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            // prim.transform.position = new Vector3(0, 200f, 0);
         }
-
-        private void FixedUpdate()
-        {
-            // Sphere, Yes
-            // var results = Physics.SphereCastAll(new Vector3(0, 200f, 0), 0.01f, Vector3.up, 0.02f);
-            
-            // Sphere, Yes
-            // var results = Physics.SphereCastAll(new Vector3(0, 200f, 0), 10f, Vector3.up, 0f);
-            
-            // Sphere, No
-            // var results = Physics.RaycastAll(new Vector3(0, 200f, 0), Vector3.up, 10f);
-            
-            // Sphere, Yes
-            // var results = Physics.RaycastAll(new Vector3(0, 198f, 0), Vector3.up, 10f);
-            
-            // Cube, Yes
-            // var results = Physics.SphereCastAll(new Vector3(0, 200f, 0), 0.01f, Vector3.up, 0.02f);
-            
-            // Cube, No
-            // var results = Physics.RaycastAll(new Vector3(0, 200f, 0), Vector3.up, 10f);
-            
-            // Cube, Yes
-            // var results = Physics.RaycastAll(new Vector3(0, 198f, 0), Vector3.up, 10f);
-            
-            // Sphere, Yes
-            // var results = Physics.OverlapSphere(new Vector3(0, 200f, 0), 0.01f);
-            
-            // Sphere, Yes
-            // var results = Physics.OverlapSphere(new Vector3(0, 200f, 0), 10f);
-            
-            // Cube, Yes
-            // var results = Physics.RaycastAll(new Vector3(0, 198f, 0), Vector3.up, 10f);
-            
-            // Debug.Log("Results:" + results.Length);
-        }
-
-        // private void OnDrawGizmos()
-        // {
-        //     Gizmos.DrawSphere(new Vector3(0, 200f, 0), 10f);
-        // }
 
         private List<Vector3Int> GetBlockedNeighborsFromPosition(Vector3Int position)
         {
