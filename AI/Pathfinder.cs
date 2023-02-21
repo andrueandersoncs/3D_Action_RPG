@@ -1,6 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using Movement.Abilities;
 using UnityEngine;
 
 namespace AI
@@ -9,6 +9,9 @@ namespace AI
     {
         private static LayerMask _obstacleLayer;
 
+        public Transform movementReceiver;
+        public TurnTowardLocationAbility turnTowardLocationAbility;
+        
         public float speed;
         public Vector3 velocity;
 
@@ -73,9 +76,9 @@ namespace AI
             _destination = destination;
             
             var transformPosition = new Vector3Int(
-                Mathf.RoundToInt(transform.position.x),
+                Mathf.RoundToInt(movementReceiver.position.x),
                 0,
-                Mathf.RoundToInt(transform.position.z)
+                Mathf.RoundToInt(movementReceiver.position.z)
             );
             
             var destinationPosition = new Vector3Int(
@@ -91,7 +94,7 @@ namespace AI
                 GetBlockedNeighborsFromPosition
             );
 
-            if ((bool)path?.Contains(transformPosition))
+            if (path != null && path.Contains(transformPosition))
             {
                 path.Remove(transformPosition);
             }
@@ -109,9 +112,9 @@ namespace AI
                 _node = node;
                 path.RemoveAt(0);
                 
-                while (Vector3.Distance(transform.position, node) > 0.1f)
+                while (Vector3.Distance(movementReceiver.position, node) > 0.1f)
                 {
-                    var transformPosition = transform.position;
+                    var transformPosition = movementReceiver.position;
 
                     // Check the node for obstacles
                     var numObstacles = Physics.OverlapSphereNonAlloc(
@@ -147,12 +150,12 @@ namespace AI
                     var target = new Vector3(node.x, transformPosition.y, node.z);
                     _target = target;
                     
-                    // Should rotation be handled here?
-                    transform.LookAt(target, Vector3Int.up);
+                    turnTowardLocationAbility.location = target;
+                    yield return turnTowardLocationAbility.Play();
                     
                     // Should movement be handled here?
                     var nextPosition = Vector3.MoveTowards(transformPosition, target, speed * Time.deltaTime);
-                    transform.position = nextPosition;
+                    movementReceiver.position = nextPosition;
 
                     // Should velocity calculation be handled here?
                     velocity = (nextPosition - transformPosition) / Time.deltaTime;

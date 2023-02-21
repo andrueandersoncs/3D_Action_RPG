@@ -30,7 +30,6 @@ namespace Movement.Abilities
 
         protected override IEnumerator Execute()
         {
-            // agent.stoppingDistance = stoppingDistance;
             pathfinder.speed = 3.5f * (1f + actionStats.FasterRunWalk / 100f);
             var path = pathfinder.SetDestination(destination);
             yield return pathfinder.WalkPath(path);

@@ -4,6 +4,7 @@ using Equipment;
 using Movement.Abilities;
 using Stats.DamageTypes;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Combat.Abilities
 {
@@ -15,7 +16,7 @@ namespace Combat.Abilities
         public CombatGroup combatGroup;
         public CombatGroup enemy;
         public DamageStats damageStats;
-        public TurnTowardGameObjectAbility turnTowardGameObjectAbility;
+        [FormerlySerializedAs("turnTowardGameObjectAbility")] public TurnTowardTargetAbility turnTowardTargetAbility;
         
         private static readonly int RightHandAttack = Animator.StringToHash("RightHandAttack");
 
@@ -44,8 +45,8 @@ namespace Combat.Abilities
                 yield return new WaitForSeconds(weapon.delay - timeSinceLastAttack);
             }
 
-            turnTowardGameObjectAbility.target = enemy.gameObject;
-            yield return turnTowardGameObjectAbility.Play();
+            turnTowardTargetAbility.target = enemy.gameObject;
+            yield return turnTowardTargetAbility.Play();
             
             if (!enemy.TryGetComponent<ReceiveDamageAbility>(out var receiveDamageAbility)) yield break;
             receiveDamageAbility.damageStatsToReceive = damageStats;

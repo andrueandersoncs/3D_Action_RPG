@@ -1,5 +1,6 @@
 using System.Collections;
 using Abilities;
+using Movement;
 using UnityEngine;
 
 namespace Inventory.Abilities
@@ -19,12 +20,13 @@ namespace Inventory.Abilities
 
             if (removeItemOutput is not ItemContainerModule.RemoveItemOutput.RemovedItem removed)
                 yield break;
-            
-            var dropPosition = transform.position + Random.onUnitSphere * 2f;
-            dropPosition.y = transform.position.y;
-            
+
+            var pos = transform.position;
+            var dropPosition = pos + PositioningExtensions.StandardNeighboringPositions
+                [Mathf.FloorToInt(Random.value * PositioningExtensions.StandardNeighboringPositions.Length)];
+
             removed.Item.transform.SetParent(null);
-            removed.Item.transform.position = dropPosition;
+            removed.Item.transform.position = dropPosition.RoundToPosition();
             removed.Item.gameObject.SetActive(true);
         }
     }

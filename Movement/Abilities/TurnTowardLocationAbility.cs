@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace Movement.Abilities
 {
-    public class TurnTowardGameObjectAbility : Ability
+    public class TurnTowardLocationAbility : Ability
     {
         public Transform objectToTurn;
-        public GameObject target;
+        public Vector3 location;
         
         protected override IEnumerator Execute()
         {
-            objectToTurn.LookAt(target.transform, Vector3.up);
+            objectToTurn.LookAt(location, Vector3.up);
             yield return null;
         }
     }
