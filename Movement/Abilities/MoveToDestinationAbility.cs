@@ -11,6 +11,7 @@ namespace Movement.Abilities
 {
     public class MoveToDestinationAbility : Ability
     {
+        public float baseSpeed = 5f;
         public Pathfinder pathfinder;
         public ActionStats actionStats;
         public Animator animator;
@@ -30,7 +31,7 @@ namespace Movement.Abilities
 
         protected override IEnumerator Execute()
         {
-            pathfinder.speed = 3.5f * (1f + actionStats.FasterRunWalk / 100f);
+            pathfinder.speed = baseSpeed * (1f + actionStats.FasterRunWalk / 100f);
             var path = pathfinder.SetDestination(destination);
             yield return pathfinder.WalkPath(path);
         }

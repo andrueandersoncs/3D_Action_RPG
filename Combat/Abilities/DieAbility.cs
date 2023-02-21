@@ -9,12 +9,18 @@ namespace Combat.Abilities
     {
         public Animator animator;
         public DropAllItemsAbility dropAllItemsAbility;
+        public Canvas healthBarUI;
         
         private static readonly int Die = Animator.StringToHash("Die");
 
         protected override IEnumerator Execute()
         {
             animator.SetTrigger(Die);
+
+            if (healthBarUI != null)
+            {
+                healthBarUI.enabled = false;    
+            }
 
             if (dropAllItemsAbility != null)
             {

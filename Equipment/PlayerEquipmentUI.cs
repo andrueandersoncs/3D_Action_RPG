@@ -9,6 +9,7 @@ namespace Equipment
     public class PlayerEquipmentUI : MonoBehaviour
     {
         public EquipItemAbility equipItemAbility;
+        public UnequipItemAbility unequipItemAbility;
         
         private UIDocument _uiDocument;
         private Equipment _equipment;
@@ -29,27 +30,27 @@ namespace Equipment
                     
                     var equipmentSlotType = Enum.Parse<EquipmentSlot>(slot.name);
 
-                    equipItemAbility.Execute(item, equipItemOutput =>
+                    equipItemAbility.item = item;
+                    equipItemAbility.callback = equipItemOutput =>
                     {
                         // TODO: handle swapped items
                         if (equipItemOutput is not EquipmentModule.EquipItemOutput.EquippedItem) return;
-                    
+
                         draggableUI.DropInto(slot);
-                
+
                         DraggableUI.OnBeginDrag += OnBeginDrag;
-                    
+
                         void OnBeginDrag(DraggableUI ui)
                         {
                             if (ui.gameObject != draggableUI.gameObject) return;
                             DraggableUI.OnBeginDrag -= OnBeginDrag;
 
-                            EquipmentModule.UnequipItem(new EquipmentModule.UnequipItemInput
-                            {
-                                Equipment = _equipment,
-                                Slot = equipmentSlotType
-                            });
+                            unequipItemAbility.equipment = _equipment;
+                            unequipItemAbility.slot = equipmentSlotType;
+                            unequipItemAbility.Play();
                         }
-                    });
+                    };
+                    equipItemAbility.Play();
                 }
                 
                 slot.RegisterCallback<MouseDownEvent>(OnSlotClicked);

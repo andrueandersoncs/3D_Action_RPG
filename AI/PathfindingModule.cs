@@ -49,7 +49,6 @@ namespace AI
         public static List<Vector3Int> AStar(
             Vector3Int start,
             Vector3Int goal,
-            Func<Vector3Int, Vector3Int, float> h,
             Func<Vector3Int, List<Vector3Int>> getBlockedPositionsNearPosition
         )
         {
@@ -84,7 +83,7 @@ namespace AI
 
             var fScore = new Dictionary<Vector3Int, float>
             {
-                {start, h(start, goal)}
+                {start, start.GetCost(goal)}
             };
 
             while (openSet.Count > 0)
@@ -122,9 +121,9 @@ namespace AI
                         gScore[neighbor] = tentativeGScore;
                     }
                     
-                    if (!fScore.TryAdd(neighbor, tentativeGScore + h(neighbor, goal)))
+                    if (!fScore.TryAdd(neighbor, tentativeGScore + neighbor.GetCost(goal)))
                     {
-                        fScore[neighbor] = tentativeGScore + h(neighbor, goal);
+                        fScore[neighbor] = tentativeGScore + neighbor.GetCost(goal);
                     }
                     
                     if (!openSet.Contains(neighbor))

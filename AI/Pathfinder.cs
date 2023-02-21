@@ -90,7 +90,6 @@ namespace AI
             var path = PathfindingModule.AStar(
                 transformPosition,
                 destinationPosition,
-                (a, b) => Mathf.Pow(b.x - a.x, 2f) + Mathf.Pow(b.z - a.z, 2f),
                 GetBlockedNeighborsFromPosition
             );
 
@@ -117,16 +116,18 @@ namespace AI
                     var transformPosition = movementReceiver.position;
 
                     // Check the node for obstacles
-                    var numObstacles = Physics.OverlapSphereNonAlloc(
-                        node,
-                        SpherecastRadius * 2f,
-                        _obstacleColliders,
+                    var numObstacles = Physics.SphereCastNonAlloc(
+                        transform.position,
+                        SpherecastRadius,
+                        (transform.position - node).normalized,
+                        _spherecastResults,
+                        1f,
                         _obstacleLayer
                     );
                     for (var o = 0; o < numObstacles; o++)
                     {
-                        var collider = _obstacleColliders[o];
-                        if (ColliderIsChild(collider, transform)) continue;
+                        var raycastHit = _spherecastResults[o];
+                        if (ColliderIsChild(raycastHit.collider, transform)) continue;
                         path = SetDestination(_destination);
                         break;
                     }
@@ -134,7 +135,7 @@ namespace AI
                     // Check our current position to make sure we're not stepping on an obstacle
                     numObstacles = Physics.OverlapSphereNonAlloc(
                         transformPosition,
-                        SpherecastRadius * 2f,
+                        SpherecastRadius * 4f,
                         _obstacleColliders,
                         _obstacleLayer
                     );

@@ -8,7 +8,7 @@ namespace Inventory
         public Vector2Int dimensions;
         public ReactiveDictionary<Vector2Int, ContainableItem> items = new();
         public ContainableItem[] initialItems;
-
+        
         private void OnEnable()
         {
             foreach (var item in initialItems)

@@ -8,20 +8,18 @@ namespace Movement.Abilities
     {
         public MoveToDestinationAbility moveToDestinationAbility;
         public GameObject target;
-        public float stoppingDistance = 2f;
+        public float stoppingDistance = 0.5f;
 
         protected override IEnumerator Execute()
         {
-            Vector3 destination;
-            
             // Added a while here to account for a moving target
-            do
+            while (Vector3.Distance(transform.position, target.transform.position) > stoppingDistance)
             {
-                destination = target.transform.position;
-                moveToDestinationAbility.destination = destination;
+                moveToDestinationAbility.destination = target.transform.position;
                 moveToDestinationAbility.stoppingDistance = stoppingDistance;
-                yield return moveToDestinationAbility.Play();
-            } while (target.transform.position != destination);
+                moveToDestinationAbility.Play();
+                yield return new WaitForSeconds(0.5f);
+            }
         }
 
         public override void Stop()

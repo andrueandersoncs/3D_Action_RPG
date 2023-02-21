@@ -3,6 +3,7 @@ using Abilities;
 using Equipment;
 using Movement.Abilities;
 using Stats.DamageTypes;
+using Stats.Vitals;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -25,7 +26,10 @@ namespace Combat.Abilities
         protected override IEnumerator Execute()
         {
             if (enemy.group == combatGroup.group) yield break;
-                
+
+            if (!enemy.TryGetComponent<VitalStats>(out var enemyVitals)) yield break;
+            if (enemyVitals.Health <= 0f) yield break;
+
             MeleeWeapon mainHandWeapon = null;
             var hasMainHand = equipment.items.TryGetValue(EquipmentSlot.MainHand, out var mainHand);
             var hasMainHandWeapon = hasMainHand && mainHand.TryGetComponent(out mainHandWeapon);
