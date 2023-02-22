@@ -39,10 +39,9 @@ namespace Equipment.Abilities
         {
             var itemTransform = item.transform;
             var itemHandle = item.handle;
-            var itemHandleLocalRotation = itemHandle.localRotation;
             itemTransform.SetParent(equipment.slotTransformParents[item.slot]);
-            itemTransform.localRotation = Quaternion.Inverse(itemHandleLocalRotation);
-            itemTransform.localPosition = itemHandleLocalRotation * itemHandle.localPosition;
+            itemTransform.localPosition = -(Quaternion.Inverse(itemHandle.localRotation) * itemHandle.localPosition);
+            itemTransform.localRotation = Quaternion.Inverse(itemHandle.localRotation);
             item.gameObject.SetActive(true);
         }
 
