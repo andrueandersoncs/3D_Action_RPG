@@ -19,7 +19,7 @@ namespace Movement.Abilities
         public Action onFailedToFindPath = delegate {  };
         
         private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
-        private float speed => baseSpeed * 1f + actionStats.FasterRunWalk / 100f;
+        private float speed => baseSpeed * (1f + actionStats.FasterRunWalk / 100f);
         
         protected override IEnumerator Execute()
         {
@@ -29,48 +29,39 @@ namespace Movement.Abilities
             
             if (path == null)
             {
-                Debug.Log("Could not find path");
+                animator.SetFloat(MoveSpeed, 0f);
                 onFailedToFindPath();
                 yield break;
             }
             
             foreach (var point in path)
             {
-                yield return MoveToPoint(point);
+                while (movementReceiver.position != point)
+                {
+                    if (pathfinder.IsPositionBlocked(point))
+                    {
+                        yield return Execute();
+                        yield break;
+                    }
+                
+                    var transformPosition = movementReceiver.position;
+                
+                    // Otherwise, move toward the point
+                    var target = new Vector3(point.x, transformPosition.y, point.z);
+                    
+                    turnTowardLocationAbility.location = target;
+                    yield return turnTowardLocationAbility.Play();
+                    
+                    var nextPosition = Vector3.MoveTowards(transformPosition, target, speed * Time.deltaTime);
+                    movementReceiver.position = nextPosition;
+
+                    animator.SetFloat(MoveSpeed, speed);
+
+                    yield return null;
+                }
             }
 
             animator.SetFloat(MoveSpeed, 0f);
-        }
-
-        private IEnumerator MoveToPoint(Vector3 point)
-        {
-            var movementReceiver = transform;
-
-            while (Vector3.Distance(movementReceiver.position, point) > 0.1f)
-            {
-                // This allows us to wait when a position is blocked
-                if (pathfinder.IsPositionBlocked(point.RoundToPosition()))
-                {
-                    animator.SetFloat(MoveSpeed, 0f);
-                    yield return null;
-                    continue;
-                }
-                
-                var transformPosition = movementReceiver.position;
-                
-                // Otherwise, move toward the point
-                var target = new Vector3(point.x, transformPosition.y, point.z);
-                    
-                turnTowardLocationAbility.location = target;
-                yield return turnTowardLocationAbility.Play();
-                    
-                var nextPosition = Vector3.MoveTowards(transformPosition, target, speed * Time.deltaTime);
-                movementReceiver.position = nextPosition;
-
-                animator.SetFloat(MoveSpeed, speed);
-
-                yield return null;
-            }
         }
     }
 }

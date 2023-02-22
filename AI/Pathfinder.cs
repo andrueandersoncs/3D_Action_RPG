@@ -24,8 +24,11 @@ namespace AI
                 _obstacleColliders,
                 _obstacleLayer
             );
+            
             if (numCurrentPositionObstacles <= 0) return false;
+            
             var collider = _obstacleColliders[0];
+            
             return !collider.transform.HasParent(transform);
         }
 
