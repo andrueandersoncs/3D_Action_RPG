@@ -21,7 +21,7 @@ namespace AI
         
         public RoamAbility roamAbility;
         public MeleeAttackAbility meleeAttackAbility;
-        public MoveToGameObjectAbility moveToGameObjectAbility;
+        public FollowTargetAbility followTargetAbility;
         
         private IEnumerator currentState;
         private Vector3 origin;
@@ -43,8 +43,9 @@ namespace AI
                     
                     meleeAttackAbility.enemy = enemy;
                     
-                    moveToGameObjectAbility.target = enemy.gameObject;
-                    moveToGameObjectAbility.PlayAndThen(meleeAttackAbility);
+                    followTargetAbility.target = enemy.gameObject;
+                    followTargetAbility.onReachedTarget += () => meleeAttackAbility.Play();
+                    followTargetAbility.Play();
                 })
                 .AddTo(this);
         }

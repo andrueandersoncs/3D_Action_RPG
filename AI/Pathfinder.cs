@@ -1,6 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using Movement.Abilities;
+using Movement;
 using UnityEngine;
 
 namespace AI
@@ -9,24 +8,25 @@ namespace AI
     {
         private static LayerMask _obstacleLayer;
 
-        public Transform movementReceiver;
-        public TurnTowardLocationAbility turnTowardLocationAbility;
-        
-        public float speed;
-        public Vector3 velocity;
-
         private readonly Collider[] _obstacleColliders = new Collider[25];
-        private readonly RaycastHit[] _spherecastResults = new RaycastHit[25];
-        [SerializeField] private Vector3 _target;
-        [SerializeField] private Vector3Int _node;
-        [SerializeField] private Vector3 _destination;
-        
         private const float SpherecastRadius = 0.25f;
-        private const float SpherecastDistance = 1f;
         
         private void OnEnable()
         {
             _obstacleLayer = LayerMask.GetMask("PathfindingObstacle");
+        }
+
+        public bool IsPositionBlocked(Vector3Int position)
+        {
+            var numCurrentPositionObstacles = Physics.OverlapSphereNonAlloc(
+                position,
+                SpherecastRadius,
+                _obstacleColliders,
+                _obstacleLayer
+            );
+            if (numCurrentPositionObstacles <= 0) return false;
+            var collider = _obstacleColliders[0];
+            return !collider.transform.HasParent(transform);
         }
 
         private List<Vector3Int> GetBlockedNeighborsFromPosition(Vector3Int position)
@@ -35,141 +35,40 @@ namespace AI
             
             // Make sure to check the current position otherwise
             // we end up looking for a path to a location that can't be reached
-            var numCurrentPositionObstacles = Physics.OverlapSphereNonAlloc(
-                position,
-                SpherecastRadius,
-                _obstacleColliders,
-                _obstacleLayer
-            );
-            if (numCurrentPositionObstacles > 0)
+            if (IsPositionBlocked(position))
             {
-                var collider = _obstacleColliders[0];
-                if (!ColliderIsChild(collider, transform))
-                {
-                    obstacles.Add(position);
-                }
+                obstacles.Add(position);
             }
             
             // This is the actual check for the neighboring positions
             foreach (var neighborDirection in PathfindingModule.StandardNeighboringPositions)
             {
-                var numObstacles = Physics.OverlapSphereNonAlloc(
-                    position + neighborDirection,
-                    SpherecastRadius,
-                    _obstacleColliders,
-                    _obstacleLayer
-                );
-                
-                for (var o = 0; o < numObstacles; o++)
+                var neighborPosition = position + neighborDirection;
+                if (IsPositionBlocked(neighborPosition))
                 {
-                    var collider = _obstacleColliders[o];
-                    if (ColliderIsChild(collider, transform)) continue;
-                    obstacles.Add(position + neighborDirection);
+                    obstacles.Add(neighborPosition);
                 }
             }
 
             return obstacles;
         }
 
-        public List<Vector3Int> SetDestination(Vector3 destination)
+        public List<Vector3Int> FindPath(Vector3 start, Vector3 destination)
         {
-            _destination = destination;
+            var roundStart = start.RoundToPosition();
             
-            var transformPosition = new Vector3Int(
-                Mathf.RoundToInt(movementReceiver.position.x),
-                0,
-                Mathf.RoundToInt(movementReceiver.position.z)
-            );
-            
-            var destinationPosition = new Vector3Int(
-                Mathf.RoundToInt(destination.x),
-                0,
-                Mathf.RoundToInt(destination.z)
-            );
-
             var path = PathfindingModule.AStar(
-                transformPosition,
-                destinationPosition,
+                roundStart,
+                destination.RoundToPosition(),
                 GetBlockedNeighborsFromPosition
             );
 
-            if (path != null && path.Contains(transformPosition))
+            if (path != null && path.Contains(roundStart))
             {
-                path.Remove(transformPosition);
+                path.Remove(roundStart);
             }
             
             return path;
-        }
-
-        public IEnumerator WalkPath(List<Vector3Int> path)
-        {
-            if (path == null) yield break;
-            
-            while (path.Count > 0)
-            {
-                var node = path[0];
-                _node = node;
-                path.RemoveAt(0);
-                
-                while (Vector3.Distance(movementReceiver.position, node) > 0.1f)
-                {
-                    var transformPosition = movementReceiver.position;
-
-                    // Check the node for obstacles
-                    var numObstacles = Physics.SphereCastNonAlloc(
-                        transform.position,
-                        SpherecastRadius,
-                        (transform.position - node).normalized,
-                        _spherecastResults,
-                        1f,
-                        _obstacleLayer
-                    );
-                    for (var o = 0; o < numObstacles; o++)
-                    {
-                        var raycastHit = _spherecastResults[o];
-                        if (ColliderIsChild(raycastHit.collider, transform)) continue;
-                        path = SetDestination(_destination);
-                        break;
-                    }
-                    
-                    // Check our current position to make sure we're not stepping on an obstacle
-                    numObstacles = Physics.OverlapSphereNonAlloc(
-                        transformPosition,
-                        SpherecastRadius * 4f,
-                        _obstacleColliders,
-                        _obstacleLayer
-                    );
-                    for (var o = 0; o < numObstacles; o++)
-                    {
-                        var collider = _obstacleColliders[o];
-                        if (ColliderIsChild(collider, transform)) continue;
-                        path = SetDestination(_destination);
-                        break;
-                    }
-                    
-                    // Otherwise, move toward the node
-                    var target = new Vector3(node.x, transformPosition.y, node.z);
-                    _target = target;
-                    
-                    turnTowardLocationAbility.location = target;
-                    yield return turnTowardLocationAbility.Play();
-                    
-                    // Should movement be handled here?
-                    var nextPosition = Vector3.MoveTowards(transformPosition, target, speed * Time.deltaTime);
-                    movementReceiver.position = nextPosition;
-
-                    // Should velocity calculation be handled here?
-                    velocity = (nextPosition - transformPosition) / Time.deltaTime;
-                    yield return null;
-                }
-            }
-            
-            velocity = Vector3.zero;
-        }
-        
-        private static bool ColliderIsChild(Component collider, Transform transform)
-        {
-            return collider.transform == transform || collider.transform.IsChildOf(transform);
         }
     }
 }

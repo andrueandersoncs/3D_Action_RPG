@@ -52,10 +52,5 @@ namespace Abilities
         }
 
         public void Enable() => disabled = false;
-
-        public virtual void Fail()
-        {
-            Stop();
-        }
     }
 }

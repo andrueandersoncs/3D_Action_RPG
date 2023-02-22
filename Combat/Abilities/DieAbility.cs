@@ -9,7 +9,8 @@ namespace Combat.Abilities
     {
         public Animator animator;
         public DropAllItemsAbility dropAllItemsAbility;
-        public Canvas healthBarUI;
+        public MonoBehaviour[] componentsToDisable;
+        public GameObject[] gameObjectsToDeactivate;
         
         private static readonly int Die = Animator.StringToHash("Die");
 
@@ -17,9 +18,14 @@ namespace Combat.Abilities
         {
             animator.SetTrigger(Die);
 
-            if (healthBarUI != null)
+            foreach (var component in componentsToDisable)
             {
-                healthBarUI.enabled = false;    
+                component.enabled = false;
+            }
+
+            foreach (var go in gameObjectsToDeactivate)
+            {
+                go.SetActive(false);
             }
 
             if (dropAllItemsAbility != null)

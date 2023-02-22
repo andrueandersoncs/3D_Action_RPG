@@ -29,7 +29,11 @@ namespace AI
                 .Select(neighborOffset => position + neighborOffset)
                 .Where(neighborPosition => !blockedPositions.Contains(neighborPosition));
         }
-            
+
+        public static bool HasParent(this Transform t, Transform parent)
+        {
+            return t == parent || t.IsChildOf(parent);
+        }
 
         private static float GetCost(this Vector3Int a, Vector3Int b) => Mathf.Pow(b.x - a.x, 2f) + Mathf.Pow(b.z - a.z, 2f);
 
