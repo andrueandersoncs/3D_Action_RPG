@@ -15,6 +15,14 @@ namespace Stats
             
             var attributeStats = GetComponent<AttributeStats>();
             
+            var levelLabel = root.Q("Level").Children().OfType<Label>().ElementAt(1);
+            attributeStats.ObserveEveryValueChanged(v => v.Level)
+                .Subscribe(level => levelLabel.text = level.ToString());
+            
+            var experienceLabel = root.Q("Experience").Children().OfType<Label>().ElementAt(1);
+            attributeStats.ObserveEveryValueChanged(v => v.Experience)
+                .Subscribe(experience => experienceLabel.text = experience.ToString());
+            
             var strengthLabel = root.Q("Strength").Children().OfType<Label>().ElementAt(1);
             attributeStats.ObserveEveryValueChanged(v => v.Strength)
                 .Subscribe(strength => strengthLabel.text = strength.ToString());
