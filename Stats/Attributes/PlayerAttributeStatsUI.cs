@@ -23,6 +23,19 @@ namespace Stats
             attributeStats.ObserveEveryValueChanged(v => v.Experience)
                 .Subscribe(experience => experienceLabel.text = experience.ToString());
             
+            var maxExperienceLabel = root.Q("MaxExperience").Children().OfType<Label>().ElementAt(1);
+            attributeStats.ObserveEveryValueChanged(v => v.MaxExperience)
+                .Subscribe(maxExperience => maxExperienceLabel.text = maxExperience.ToString());
+            
+            var experienceBar = root.Q("ExperienceBar");
+            attributeStats.ObserveEveryValueChanged(v => v.Experience)
+                .CombineLatest(attributeStats.ObserveEveryValueChanged(v => v.MaxExperience), (experience, maxExperience) => (experience, maxExperience))
+                .Subscribe(tuple =>
+                {
+                    var (experience, maxExperience) = tuple;
+                    experienceBar.style.width = Length.Percent(experience / (float)maxExperience * 100f);
+                });
+            
             var strengthLabel = root.Q("Strength").Children().OfType<Label>().ElementAt(1);
             attributeStats.ObserveEveryValueChanged(v => v.Strength)
                 .Subscribe(strength => strengthLabel.text = strength.ToString());

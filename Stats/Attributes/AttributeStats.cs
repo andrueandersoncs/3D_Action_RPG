@@ -6,6 +6,8 @@ namespace Stats
     {
         public int Level;
         public int Experience;
+        public int MaxExperience;
+        
         public float Strength;
         public float Dexterity;
         public float Vitality;
@@ -15,6 +17,7 @@ namespace Stats
         {
             Level += other.Level;
             Experience += other.Experience;
+            MaxExperience += other.MaxExperience;
             Strength += other.Strength;
             Dexterity += other.Dexterity;
             Vitality += other.Vitality;
@@ -25,6 +28,7 @@ namespace Stats
         {
             Level -= other.Level;
             Experience -= other.Experience;
+            MaxExperience -= other.MaxExperience;
             Strength -= other.Strength;
             Dexterity -= other.Dexterity;
             Vitality -= other.Vitality;

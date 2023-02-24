@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using Abilities;
 using Inventory.Abilities;
+using Stats;
+using UniRx;
 using UnityEngine;
 
 namespace Combat.Abilities
@@ -11,6 +14,8 @@ namespace Combat.Abilities
         public DropAllItemsAbility dropAllItemsAbility;
         public MonoBehaviour[] componentsToDisable;
         public GameObject[] gameObjectsToDeactivate;
+        public EnemyDetector enemyDetector;
+        public AttributeStats attributeStats;
         
         private static readonly int Die = Animator.StringToHash("Die");
 
@@ -18,6 +23,14 @@ namespace Combat.Abilities
         {
             animator.SetTrigger(Die);
 
+            // Reward experience to all detected enemies
+            foreach (var enemy in enemyDetector.detectedEnemies)
+            {
+                if (!enemy.TryGetComponent<ReceiveExperienceAbility>(out var receiveExperienceAbility)) continue;
+                receiveExperienceAbility.experience = attributeStats.Experience;
+                receiveExperienceAbility.Play();
+            }
+            
             foreach (var component in componentsToDisable)
             {
                 component.enabled = false;
