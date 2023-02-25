@@ -1,5 +1,6 @@
 using DefaultNamespace;
 using Keyboard;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,10 +12,14 @@ namespace Stats
         {
             var uiDocument = FindObjectOfType<UIDocument>();
             var root = uiDocument.rootVisualElement;
-        
-            // UI Toggle keybinding:
             var statsVisualElement = root.Q("Stats");
-            Keybindings.Bind(KeyCode.S, () => UserInterface.Toggle(statsVisualElement));
+            var statsToggle = root.Q<Toggle>("StatsToggle");
+            
+            statsToggle.ObserveEveryValueChanged(i => i.value)
+                .Subscribe(v => UserInterface.Toggle(statsVisualElement, v))
+                .AddTo(this);
+            
+            Keybindings.Bind(KeyCode.S, () => statsToggle.value = !statsToggle.value);
         }
     }
 }

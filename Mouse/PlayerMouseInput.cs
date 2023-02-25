@@ -26,16 +26,16 @@ namespace Mouse
         private void DetectMouseOverUI()
         {
             var uiDocument = FindObjectOfType<UIDocument>();
+            
             if (uiDocument == null) return;
             
             var root = uiDocument.rootVisualElement;
-            var container = root.Q("UIContainer");
             
-            foreach (var visualElement in container.Children())
+            root.Query(className: "block-mouse").ForEach(visualElement =>
             {
                 visualElement.RegisterCallback<PointerEnterEvent>(_ => isMouseOverUI = true);
                 visualElement.RegisterCallback<PointerLeaveEvent>(_ => isMouseOverUI = false);
-            }
+            });
         }
 
         private void DetectRaycastHits()

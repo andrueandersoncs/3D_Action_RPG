@@ -20,8 +20,15 @@ namespace DefaultNamespace
         {
             _uiDocument = FindObjectOfType<UIDocument>();
 
-            var inventory = _uiDocument.rootVisualElement.Q("Inventory"); 
-            Keybindings.Bind(KeyCode.I, () => UserInterface.Toggle(inventory));
+            var inventory = _uiDocument.rootVisualElement.Q("Inventory");
+            
+            var inventoryToggle = _uiDocument.rootVisualElement.Q<Toggle>("InventoryToggle");
+            inventoryToggle
+                .ObserveEveryValueChanged(i => i.value)
+                .Subscribe(v => UserInterface.Toggle(inventory, v))
+                .AddTo(this);
+            
+            Keybindings.Bind(KeyCode.I, () => inventoryToggle.value = !inventoryToggle.value);
             
             _visualElement = _uiDocument.rootVisualElement.Q<VisualElement>(visualElementName);
             _visualElement.RegisterCallback<MouseDownEvent>(HandleMouseDown);

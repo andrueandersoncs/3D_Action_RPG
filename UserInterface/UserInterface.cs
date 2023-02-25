@@ -47,5 +47,12 @@ namespace DefaultNamespace
                 ? new StyleEnum<DisplayStyle>(DisplayStyle.None)
                 : new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
         }
+        
+        public static void Toggle(VisualElement v, bool show)
+        {
+            v.style.display = show
+                ? new StyleEnum<DisplayStyle>(DisplayStyle.Flex)
+                : new StyleEnum<DisplayStyle>(DisplayStyle.None);
+        }
     }
 }
