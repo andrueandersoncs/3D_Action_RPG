@@ -30,7 +30,8 @@ namespace Player
                 {
                     moveToGameObjectAbility.target = enemy.gameObject;
                     meleeAttackAbility.enemy = enemy;
-                    moveToGameObjectAbility.PlayAndThen(meleeAttackAbility);
+                    moveToGameObjectAbility.nextAbilities = new[] {meleeAttackAbility};
+                    moveToGameObjectAbility.PlayAll();
                 }
                 
                 return true;

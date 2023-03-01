@@ -20,7 +20,20 @@ namespace Combat.Abilities
 
         protected override IEnumerator Execute()
         {
-            ReceiveDamage();
+            if (vitalStats.Health <= 0)
+            {
+                Debug.Log("Did not successfully execute receive damage ability");
+                successfullyExecuted = false;
+                yield break;
+            }
+            
+            var damage = resistanceStats == null ? AggregateDamage() : CalculateDamage();
+            
+            Debug.Log("Damage dealt:" + damage);
+            
+            vitalStats.Health -= damage;
+            
+            Debug.Log("Health:" + vitalStats.Health);
 
             if (vitalStats.Health <= 0)
             {
@@ -30,12 +43,8 @@ namespace Combat.Abilities
             {
                 animator.SetTrigger(TakeDamage);
             }
-        }
-        
-        private void ReceiveDamage()
-        {
-            var damage = resistanceStats == null ? AggregateDamage() : CalculateDamage();
-            vitalStats.Health -= damage;
+
+            successfullyExecuted = true;
         }
         
         private float AggregateDamage()

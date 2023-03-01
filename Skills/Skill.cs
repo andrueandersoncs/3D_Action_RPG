@@ -6,7 +6,8 @@ namespace Skills
     public class Skill : ScriptableObject
     {
         public Texture2D icon;
-        public string animationTrigger;
+        public string animationLoadTrigger;
+        public string animationReleaseTrigger;
         
         public string skillName;
         public string description;

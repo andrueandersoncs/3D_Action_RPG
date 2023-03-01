@@ -14,6 +14,7 @@ namespace Movement.Abilities
             while (true)
             {
                 transform.Translate(direction * (Time.deltaTime * speed));
+                yield return null;
             }
         }
     }
