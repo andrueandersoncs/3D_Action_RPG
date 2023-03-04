@@ -8,20 +8,17 @@ namespace Skills
 {
     public class Skills : MonoBehaviour
     {
-        public Skill[] initialSkillPointAllocations;
-        public ReactiveCollection<Skill> skillPointAllocations = new();
+        public SkillScriptableObject[] initialSkillPointAllocations;
+        public ReactiveCollection<SkillScriptableObject> skillPointAllocations = new();
         
-        public IEnumerable<Skill> DistinctSkills => skillPointAllocations.Distinct();
+        public ReactiveProperty<int> skillPoints = new(0);
+        public SkillScriptableObject[] availableSkills;
         
+        public IEnumerable<SkillScriptableObject> DistinctSkills => skillPointAllocations.Distinct();
 
         private void Start()
         {
             skillPointAllocations.AddRange(initialSkillPointAllocations);
         }
-
-        // locked skills
-        // unlocked skills
-        // skill points
-        // skill dependency graph
     }
 }

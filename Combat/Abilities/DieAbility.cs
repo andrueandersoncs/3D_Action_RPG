@@ -48,7 +48,7 @@ namespace Combat.Abilities
 
             foreach (var ability in GetComponents<Ability>())
             {
-                ability.Disable();
+                Destroy(ability);
             }
         }
     }

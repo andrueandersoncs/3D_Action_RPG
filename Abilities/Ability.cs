@@ -8,73 +8,37 @@ namespace Abilities
         public Ability[] nextAbilities;
         public bool successfullyExecuted = true;
         
-        [SerializeField] private bool running = false;
-
-        private bool disabled;
-        
         protected abstract IEnumerator Execute();
 
-        private IEnumerator ExecuteAll()
-        {
-            // Debug.Log("Executing all..");
-            
-            yield return Execute();
-            
-            // Debug.Log("Finished Execute");
-            
-            if (!successfullyExecuted)
-            {
-                Debug.Log("Didn't successfully execute:" + name);
-                yield break;
-            }
-            
-            foreach (var nextAbility in nextAbilities)
-            {
-                Debug.Log("Playing next ability:" + nextAbility.name);
-                yield return nextAbility.Execute();
-                if (!nextAbility.successfullyExecuted)
-                {
-                    Debug.Log("Next ability did not successfully execute!");
-                    yield break;
-                }
-            }
-        }
-        
         public Coroutine Play()
         {
-            if (disabled)
-            {
-                // Debug.Log("Play disabled");
-                return null;
-            }
             Stop();
-            running = true;
             return StartCoroutine(Execute());
         }
 
         public Coroutine PlayAll()
         {
-            if (disabled) return null;
             Stop();
-            running = true;
-            return StartCoroutine(ExecuteAll());   
+
+            IEnumerator DoPlayAll()
+            {
+                yield return Execute();
+                if (!successfullyExecuted) yield break;
+                
+                foreach (var ability in nextAbilities)
+                {
+                    yield return ability.Play();
+                    successfullyExecuted = ability.successfullyExecuted;
+                    if (!successfullyExecuted) yield break;
+                }
+            }
+
+            return StartCoroutine(DoPlayAll());
         }
         
         public void FireAndForget() => Play();
-        public void FireAndForgetAll() => StartCoroutine(ExecuteAll());
+        public void FireAndForgetAll() => PlayAll();
 
-        public virtual void Stop()
-        {
-            StopAllCoroutines();
-            running = false;
-        }
-
-        public void Disable()
-        {
-            Stop();
-            disabled = true;
-        }
-
-        public void Enable() => disabled = false;
+        public virtual void Stop() => StopAllCoroutines();
     }
 }

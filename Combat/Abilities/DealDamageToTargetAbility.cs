@@ -32,12 +32,17 @@ namespace Combat.Abilities
                 yield break;
             }
 
-            var receiveDamageAbility = component.GetComponent<ReceiveDamageAbility>();
+            if (!component.TryGetComponent<ReceiveDamageAbility>(out var receiveDamageAbility))
+            {
+                successfullyExecuted = false;
+                yield break;
+            }
+            
             receiveDamageAbility.damageStatsToReceive = damageStats;
             yield return receiveDamageAbility.Play();
 
-            Debug.Log("Finished playing receive damage ability: " + receiveDamageAbility.successfullyExecuted);
-            Debug.Log("Receiver: " + receiveDamageAbility.name);
+            // Debug.Log("Finished playing receive damage ability: " + receiveDamageAbility.successfullyExecuted);
+            // Debug.Log("Receiver: " + receiveDamageAbility.name);
             
             successfullyExecuted = receiveDamageAbility.successfullyExecuted;
         }

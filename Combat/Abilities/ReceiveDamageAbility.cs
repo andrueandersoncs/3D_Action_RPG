@@ -22,18 +22,18 @@ namespace Combat.Abilities
         {
             if (vitalStats.Health <= 0)
             {
-                Debug.Log("Did not successfully execute receive damage ability");
+                // Debug.Log("Did not successfully execute receive damage ability");
                 successfullyExecuted = false;
                 yield break;
             }
             
             var damage = resistanceStats == null ? AggregateDamage() : CalculateDamage();
             
-            Debug.Log("Damage dealt:" + damage);
+            // Debug.Log("Damage dealt:" + damage);
             
             vitalStats.Health -= damage;
             
-            Debug.Log("Health:" + vitalStats.Health);
+            // Debug.Log("Health:" + vitalStats.Health);
 
             if (vitalStats.Health <= 0)
             {
