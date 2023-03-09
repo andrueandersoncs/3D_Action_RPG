@@ -1,14 +1,12 @@
 using System.Collections;
 using Abilities;
-using Combat;
-using Combat.Abilities;
 using Movement.Abilities;
 using Stats;
 using Stats.Vitals;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Skills
+namespace Skills.Abilities
 {
     public class UseSkillAbility : Ability
     {
@@ -22,7 +20,6 @@ namespace Skills
         public Animator animator;
         public AttributeStats attributeStats;
         public VitalStats vitalStats;
-        public CombatGroup combatGroup;
         public Transform projectileSpawnPoint;
         public TurnTowardLocationAbility turnTowardLocationAbility;
 
@@ -35,7 +32,7 @@ namespace Skills
             yield return TurnTowardTarget();
             yield return PlayAnimations();
             SpendResources();
-            InstantiateProjectile();
+            InstantiatePrefab();
         }
         
         private bool RequirementsMet() =>
@@ -71,20 +68,20 @@ namespace Skills
             _cooldownEndTime = Time.time + skillScriptableObject.cooldown;
         }
         
-        private void InstantiateProjectile()
+        private void InstantiatePrefab()
         {
+            if (skillScriptableObject.prefab == null) return;
+            
             var towardTarget = target - transform.position;
             towardTarget.y = 0f;
-            
             var rotationTowardTarget = Quaternion.LookRotation(towardTarget);
-            
             var spawnPosition = projectileSpawnPoint.position + Vector3.ClampMagnitude(towardTarget, skillScriptableObject.range);
-            
             var instance = Instantiate(skillScriptableObject.prefab, spawnPosition, rotationTowardTarget);
             
-            if (!instance.TryGetComponent<ApplySkillEffectAbility>(out var applySkillEffectAbility)) return;
-            applySkillEffectAbility.target = gameObject;
-            applySkillEffectAbility.PlayAll();
+            if (!instance.TryGetComponent<ApplySkillEffectsAbility>(out var applySkillEffectsAbility)) return;
+            applySkillEffectsAbility.target = gameObject;
+            applySkillEffectsAbility.skillName = skillScriptableObject.skillName;
+            applySkillEffectsAbility.FireAndForget();
         }
     }
 }

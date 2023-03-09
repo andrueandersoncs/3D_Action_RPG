@@ -1,6 +1,7 @@
 using Mouse;
 using Movement.Abilities;
 using Skills;
+using Skills.Abilities;
 using UnityEngine;
 
 namespace Movement

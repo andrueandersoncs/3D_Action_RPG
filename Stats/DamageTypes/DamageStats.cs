@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Stats.DamageTypes
 {
-    public class DamageStats : MonoBehaviour, IStats<DamageStats>
+    public class DamageStats : MonoBehaviour, IStats
     {
         public float FireDamage;
         public float ColdDamage;
@@ -17,8 +17,9 @@ namespace Stats.DamageTypes
         public float AggregateDamage() =>
             FireDamage + ColdDamage + LightningDamage + PoisonDamage + ArcaneDamage + PhysicalDamage;
 
-        public void Add(DamageStats other)
+        public void Add(IStats stats)
         {
+            if (stats is not DamageStats other) return;
             FireDamage += other.FireDamage;
             ColdDamage += other.ColdDamage;
             LightningDamage += other.LightningDamage;
@@ -27,8 +28,9 @@ namespace Stats.DamageTypes
             PhysicalDamage += other.PhysicalDamage;
         }
         
-        public void Subtract(DamageStats other)
+        public void Subtract(IStats stats)
         {
+            if (stats is not DamageStats other) return;
             FireDamage -= other.FireDamage;
             ColdDamage -= other.ColdDamage;
             LightningDamage -= other.LightningDamage;

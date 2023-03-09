@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stats.ResistanceTypes
 {
-    public class ResistanceStats : MonoBehaviour, IStats<ResistanceStats>
+    public class ResistanceStats : MonoBehaviour, IStats
     {
         public float FireResistance;
         public float ColdResistance;
@@ -13,8 +13,9 @@ namespace Stats.ResistanceTypes
         public float ArcaneResistance;
         public float PhysicalResistance;
 
-        public void Add(ResistanceStats other)
+        public void Add(IStats stats)
         {
+            if (stats is not ResistanceStats other) return;
             FireResistance += other.FireResistance;
             ColdResistance += other.ColdResistance;
             LightningResistance += other.LightningResistance;
@@ -23,8 +24,9 @@ namespace Stats.ResistanceTypes
             PhysicalResistance += other.PhysicalResistance;
         }
         
-        public void Subtract(ResistanceStats other)
+        public void Subtract(IStats stats)
         {
+            if (stats is not ResistanceStats other) return;
             FireResistance -= other.FireResistance;
             ColdResistance -= other.ColdResistance;
             LightningResistance -= other.LightningResistance;

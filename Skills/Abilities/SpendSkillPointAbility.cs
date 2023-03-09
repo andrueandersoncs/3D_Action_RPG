@@ -3,7 +3,7 @@ using System.Linq;
 using Abilities;
 using UnityEngine;
 
-namespace Skills
+namespace Skills.Abilities
 {
     public class SpendSkillPointAbility : Ability
     {
@@ -20,19 +20,19 @@ namespace Skills
             skills.skillPoints.Value--;
         }
         
-        private bool GetCanAllocateSkillPoint(SkillScriptableObject skillScriptableObject)
+        private bool GetCanAllocateSkillPoint(SkillScriptableObject skillInput)
         {
-            var skillIsAvailable = skills.availableSkills.Contains(skillScriptableObject);
+            var skillIsAvailable = skills.availableSkills.Contains(skillInput);
             if (!skillIsAvailable) return false;
             
             var hasNoSkillPoints = skills.skillPoints.Value <= 0;
             if (hasNoSkillPoints) return false;
             
-            var thisSkillAllocations = skills.skillPointAllocations.Count(skill => skill == skillScriptableObject);
-            var hasMaxAllocations = thisSkillAllocations >= skillScriptableObject.maxAllocations;
+            var thisSkillAllocations = skills.skillPointAllocations.Count(skill => skill == skillInput);
+            var hasMaxAllocations = thisSkillAllocations >= skillInput.maxAllocations;
             if (hasMaxAllocations) return false;
             
-            var hasAllocationRequirements = skillScriptableObject.skillAllocationRequirements.All(r =>
+            var hasAllocationRequirements = skillInput.skillAllocationRequirements.All(r =>
                     skills.skillPointAllocations.Count(skill => skill == r.skill) >= r.amount);
 
             return hasAllocationRequirements;

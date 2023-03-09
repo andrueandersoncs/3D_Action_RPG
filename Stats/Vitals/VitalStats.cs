@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stats.Vitals
 {
-    public class VitalStats : MonoBehaviour, IStats<VitalStats>
+    public class VitalStats : MonoBehaviour, IStats
     {
         public float Health;
         public float MaxHealth;
@@ -13,8 +13,9 @@ namespace Stats.Vitals
         public float Stamina;
         public float MaxStamina;
 
-        public void Add(VitalStats other)
+        public void Add(IStats stats)
         {
+            if (stats is not VitalStats other) return;
             Health += other.Health;
             MaxHealth += other.MaxHealth;
             Mana += other.Mana;
@@ -23,8 +24,9 @@ namespace Stats.Vitals
             MaxStamina += other.MaxStamina;
         }
         
-        public void Subtract(VitalStats other)
+        public void Subtract(IStats stats)
         {
+            if (stats is not VitalStats other) return;
             Health -= other.Health;
             MaxHealth -= other.MaxHealth;
             Mana -= other.Mana;

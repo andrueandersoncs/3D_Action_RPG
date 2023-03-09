@@ -1,8 +1,8 @@
 namespace Stats
 {
-    public interface IStats<in T>
+    public interface IStats
     {
-        public void Add(T other);
-        public void Subtract(T other);
+        public void Add(IStats other);
+        public void Subtract(IStats other);
     }
 }

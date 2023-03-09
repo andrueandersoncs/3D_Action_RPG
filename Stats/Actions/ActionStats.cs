@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stats
 {
-    public class ActionStats : MonoBehaviour, IStats<ActionStats>
+    public class ActionStats : MonoBehaviour, IStats
     {
         public float FasterCastRate;
         public float FasterBlockRate;
@@ -10,8 +10,9 @@ namespace Stats
         public float FasterRunWalk;
         public float MagicFind;
         
-        public void Add(ActionStats other)
+        public void Add(IStats stats)
         {
+            if (stats is not ActionStats other) return;
             FasterCastRate += other.FasterCastRate;
             FasterBlockRate += other.FasterBlockRate;
             FasterHitRecovery += other.FasterHitRecovery;
@@ -19,8 +20,9 @@ namespace Stats
             MagicFind += other.MagicFind;
         }
 
-        public void Subtract(ActionStats other)
+        public void Subtract(IStats stats)
         {
+            if (stats is not ActionStats other) return;
             FasterCastRate -= other.FasterCastRate;
             FasterBlockRate -= other.FasterBlockRate;
             FasterHitRecovery -= other.FasterHitRecovery;

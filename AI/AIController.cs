@@ -28,6 +28,7 @@ namespace AI
         
         private void OnEnable()
         {
+            
             origin = transform.position;
             
             roamAbility.origin = origin;
