@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Movement;
 using UnityEngine;
 
 namespace Pathfinding
@@ -22,6 +23,10 @@ namespace Pathfinding
                 new Vector3Int(-1, 0, -1)
             };
         }
+
+        public static bool IsNeighbor(this GameObject a, GameObject b) =>
+            a.transform.position.RoundToInt()
+                .GetNeighboringPositions(new List<Vector3Int>()).Contains(b.transform.position.RoundToInt());
 
         private static IEnumerable<Vector3Int> GetNeighboringPositions(this Vector3Int position, ICollection<Vector3Int> blockedPositions)
         {

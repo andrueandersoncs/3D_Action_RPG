@@ -1,21 +1,23 @@
-using System;
 using System.Collections;
 using Abilities;
 using Inventory.Abilities;
 using Stats;
-using UniRx;
 using UnityEngine;
 
 namespace Combat.Abilities
 {
     public class DieAbility : Ability
     {
+        [Header("Dependencies")]
         public Animator animator;
-        public DropAllItemsAbility dropAllItemsAbility;
-        public MonoBehaviour[] componentsToDisable;
-        public GameObject[] gameObjectsToDeactivate;
         public EnemyDetector enemyDetector;
         public AttributeStats attributeStats;
+        public DropAllItemsAbility dropAllItemsAbility;
+        
+        [Header("Configuration")]
+        public MonoBehaviour[] componentsToDisable;
+        public MonoBehaviour[] componentsToDestroy;
+        public GameObject[] gameObjectsToDeactivate;
         
         private static readonly int Die = Animator.StringToHash("Die");
 
@@ -34,6 +36,11 @@ namespace Combat.Abilities
             foreach (var component in componentsToDisable)
             {
                 component.enabled = false;
+            }
+            
+            foreach (var component in componentsToDestroy)
+            {
+                Destroy(component);
             }
 
             foreach (var go in gameObjectsToDeactivate)

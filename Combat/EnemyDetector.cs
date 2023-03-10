@@ -1,3 +1,4 @@
+using Stats.Vitals;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -15,8 +16,9 @@ namespace Combat
             detectionTrigger
                 .OnTriggerEnterAsObservable()
                 .Where(collider =>
-                    collider.TryGetComponent<CombatGroup>(out var otherCombatGroup) &&
-                    otherCombatGroup.group != combatGroup.group
+                    collider.TryGetComponent<CombatGroup>(out var otherCombatGroup)
+                    && otherCombatGroup.group != combatGroup.group
+                    && collider.TryGetComponent<VitalStats>(out _)
                 )
                 .Subscribe(collider => detectedEnemies.Add(collider.gameObject))
                 .AddTo(this);

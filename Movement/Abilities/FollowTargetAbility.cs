@@ -1,29 +1,30 @@
 using System;
 using System.Collections;
 using Abilities;
+using Pathfinding;
 using UnityEngine;
 
 namespace Movement.Abilities
 {
     public class FollowTargetAbility : Ability
     {
-        public MoveToDestinationAbility moveToDestinationAbility;
+        [Header("Dependencies")]
+        public MoveToGameObjectAbility moveToGameObjectAbility;
+        
+        [Header("Parameters")]
         public GameObject target;
+        
+        [Header("State")]
         public Action onReachedTarget = delegate {  };
         
         protected override IEnumerator Execute()
         {
-            while (true)
+            while (gameObject != null && !gameObject.IsNeighbor(target))
             {
-                moveToDestinationAbility.destination = target.transform.position;
-                
-                yield return moveToDestinationAbility.Play();
-                
-                if (Vector3.Distance(target.transform.position, transform.position) > 0.1f)
-                    continue;
-
-                onReachedTarget();
+                moveToGameObjectAbility.target = target;
+                yield return moveToGameObjectAbility.Play();
             }
+            onReachedTarget();
         }
     }
 }
