@@ -12,8 +12,14 @@ namespace Equipment.Abilities
 {
     public class EquipItemAbility : Ability
     {
+        [Header("Dependencies")]
         public Equipment equipment;
+        
+        [Header("Parameters")]
         public EquipableItem item;
+        public EquipmentSlot slot;
+        
+        [Header("State")]
         public Action<EquipmentModule.EquipItemOutput> callback = delegate(EquipmentModule.EquipItemOutput output) {  };
 
         protected override IEnumerator Execute()
@@ -24,7 +30,7 @@ namespace Equipment.Abilities
             {
                 Item = item,
                 Equipment = equipment,
-                Slot = item.slot
+                Slot = slot
             });
 
             if (equipItemOutput is not EquipmentModule.EquipItemOutput.EquippedItem equipped) yield break;

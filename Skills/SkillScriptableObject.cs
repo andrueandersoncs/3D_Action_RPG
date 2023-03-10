@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Skills
@@ -15,7 +16,7 @@ namespace Skills
         public int levelRequirement;
         public SkillAllocationRequirementStruct[] skillAllocationRequirements;
         public int maxAllocations;
-        
+
         // Create Projectile (Direction)
         // - Firebolt
         // - Fireball

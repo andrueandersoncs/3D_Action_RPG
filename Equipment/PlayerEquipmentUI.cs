@@ -31,6 +31,7 @@ namespace Equipment
                     var equipmentSlotType = Enum.Parse<EquipmentSlot>(slot.name);
 
                     equipItemAbility.item = item;
+                    equipItemAbility.slot = equipmentSlotType;
                     equipItemAbility.callback = equipItemOutput =>
                     {
                         // TODO: handle swapped items
