@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Inventory;
 using Keyboard;
 using UniRx;
@@ -31,27 +32,39 @@ namespace DefaultNamespace
             Keybindings.Bind(KeyCode.I, () => inventoryToggle.value = !inventoryToggle.value);
             
             _visualElement = _uiDocument.rootVisualElement.Q<VisualElement>(visualElementName);
-            _visualElement.RegisterCallback<MouseDownEvent>(HandleMouseDown);
-
-            // Situation: Dragging something and we click an inventory slot
-            void HandleMouseDown(MouseDownEvent evt)
+            
+            var rows = _visualElement.Children();
+            var y = 0;
+            foreach (var row in rows)
             {
-                var cell = evt.localMousePosition / CellSize;
+                var columns = row.Children();
+                var x = 0;
+                foreach (var column in columns)
+                {
+                    column.RegisterCallback(HandleClickSlot(x, y, column));
+                    x++;
+                }
+                y++;
+            }
+
+            // Only handles dropping items into slots
+            // - This is because picking up an item from a slot is already handled in the draggableUI component
+            EventCallback<MouseDownEvent> HandleClickSlot(int x, int y, VisualElement target) => (evt) =>
+            {
                 if (DraggableUI.Dragging == null) return;
                 
-                // Situation: Dragging something
                 var item = DraggableUI.Dragging.GetComponent<ContainableItem>();
                 var insertItemOutput = ItemContainerModule.InsertItem(new ItemContainerModule.InsertItemInput
                 {
                     ItemContainer = _container,
                     ContainableItem = item,
-                    Position = new Vector2Int((int) cell.x, (int) cell.y)
+                    Position = new Vector2Int(x, y)
                 });
+                
+                // Early return when item is not actually inserted
                 if (insertItemOutput is not ItemContainerModule.InsertItemOutput.ItemInserted) return;
                 
-                // Situation: inserted an item into the inventory
-                var pos = new Vector2Int((int)cell.x, (int)cell.y);
-                DraggableUI.Dragging.DropInto(_visualElement, pos * CellSize);
+                DraggableUI.Dragging.DropInto(target, Vector2.zero);
                 DraggableUI.OnBeginDrag += OnBeginDrag;
                 
                 void OnBeginDrag(DraggableUI ui)
@@ -66,7 +79,7 @@ namespace DefaultNamespace
                         ContainableItem = item
                     });
                 }
-            }
+            };
 
             _container = GetComponent<ItemContainer>();
             _container.items.ObserveAdd().Subscribe(OnAddItem);
@@ -98,18 +111,19 @@ namespace DefaultNamespace
         {
             var itemUI = removeEvent.Value.GetComponent<ContainableItemUI>();
             var itemUIVisualElement = itemUI.GetVisualElement();
-            if (_visualElement.Contains(itemUIVisualElement))
-                _visualElement.Remove(itemUIVisualElement);
+            var position = removeEvent.Key;
+            var slot = _visualElement.Children().ElementAt(position.y).Children().ElementAt(position.x);
+            if (slot.Contains(itemUIVisualElement)) slot.Remove(itemUIVisualElement);
         }
 
         private void InsertItem(IUserInterface itemUI, int x, int y)
         {
             var visualElement = itemUI.GetVisualElement();
             visualElement.style.display = DisplayStyle.Flex;
-            visualElement.style.left = x * CellSize;
-            visualElement.style.top = y * CellSize;
+            visualElement.style.left = 0;
+            visualElement.style.top = 0;
             visualElement.BringToFront();
-            _visualElement.Add(visualElement);
+            _visualElement.Children().ElementAt(y).Children().ElementAt(x).Add(visualElement);
         }
 
         public VisualElement GetVisualElement()
