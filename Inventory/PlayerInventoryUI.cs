@@ -1,16 +1,14 @@
-using System;
 using System.Linq;
-using Inventory;
+using DefaultNamespace;
 using Keyboard;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace DefaultNamespace
+namespace Inventory
 {
     public class PlayerInventoryUI: MonoBehaviour, IUserInterface
     {
-        public int CellSize;
         public string visualElementName;
         
         private UIDocument _uiDocument;
