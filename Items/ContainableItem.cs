@@ -1,8 +1,6 @@
-using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-namespace Inventory
+namespace Items
 {
     public class ContainableItem : MonoBehaviour
     {

@@ -11,13 +11,16 @@ namespace Combat.Abilities
 {
     public class MeleeAttackAbility : Ability
     {
+        [Header("Dependencies")]
         public Equipment.Equipment equipment;
         public MoveToGameObjectAbility moveToGameObjectAbility;
         public Animator animator;
         public CombatGroup combatGroup;
-        public CombatGroup enemy;
         public DamageStats damageStats;
         [FormerlySerializedAs("turnTowardGameObjectAbility")] public TurnTowardTargetAbility turnTowardTargetAbility;
+        
+        [Header("Parameters")]
+        public CombatGroup enemy;
         
         private static readonly int RightHandAttack = Animator.StringToHash("RightHandAttack");
 

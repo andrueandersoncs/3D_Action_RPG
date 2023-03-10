@@ -1,9 +1,8 @@
-using System;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Inventory
+namespace Items
 {
     public class ContainableItemUI : MonoBehaviour, IUserInterface
     {
@@ -36,6 +35,7 @@ namespace Inventory
                     borderTopWidth = 1,
                 }
             };
+            
         }
 
         public VisualElement GetVisualElement()

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Abilities;
 using Inventory;
+using Items;
 using Stats;
 using Stats.DamageTypes;
 using Stats.ResistanceTypes;
