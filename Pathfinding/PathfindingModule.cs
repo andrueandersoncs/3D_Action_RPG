@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace AI
+namespace Pathfinding
 {
     public static class PathfindingModule
     {

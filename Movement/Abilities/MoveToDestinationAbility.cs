@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Abilities;
 using AI;
+using Pathfinding;
 using Stats;
 using UnityEngine;
 

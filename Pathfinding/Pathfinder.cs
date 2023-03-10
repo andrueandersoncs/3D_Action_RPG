@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Movement;
 using UnityEngine;
 
-namespace AI
+namespace Pathfinding
 {
     public class Pathfinder : MonoBehaviour
     {
