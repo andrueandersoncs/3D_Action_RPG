@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using Abilities;
-using AI;
 using Pathfinding;
 using Stats;
 using UnityEngine;
@@ -10,14 +9,18 @@ namespace Movement.Abilities
 {
     public class MoveToDestinationAbility : Ability
     {
-        public float baseSpeed = 5f;
+        [Header("Dependencies")]
         public Pathfinder pathfinder;
         public ActionStats actionStats;
         public Animator animator;
         public TurnTowardLocationAbility turnTowardLocationAbility;
 
+        [Header("Parameters")]
         public Vector3 destination;
+        
+        [Header("State")]
         public Action onFailedToFindPath = delegate {  };
+        public float baseSpeed = 5f;
         
         private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
         private float speed => baseSpeed * (1f + actionStats.FasterRunWalk / 100f);
@@ -62,6 +65,12 @@ namespace Movement.Abilities
                 }
             }
 
+            animator.SetFloat(MoveSpeed, 0f);
+        }
+        
+        public override void Stop()
+        {
+            base.Stop();
             animator.SetFloat(MoveSpeed, 0f);
         }
     }

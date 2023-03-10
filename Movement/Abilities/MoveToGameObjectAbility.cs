@@ -6,7 +6,10 @@ namespace Movement.Abilities
 {
     public class MoveToGameObjectAbility : Ability
     {
+        [Header("Dependencies")]
         public MoveToDestinationAbility moveToDestinationAbility;
+        
+        [Header("Parameters")]
         public GameObject target;
 
         protected override IEnumerator Execute()

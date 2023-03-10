@@ -5,6 +5,7 @@ namespace Abilities
 {
     public abstract class Ability : MonoBehaviour
     {
+        public Ability[] cancelWhenStarted;
         public Ability[] nextAbilities;
         public bool successfullyExecuted = true;
         
@@ -13,6 +14,12 @@ namespace Abilities
         public Coroutine Play()
         {
             Stop();
+
+            foreach (var ability in cancelWhenStarted)
+            {
+                ability.Stop();
+            }
+            
             return StartCoroutine(Execute());
         }
 
@@ -20,6 +27,11 @@ namespace Abilities
         {
             Stop();
 
+            foreach (var ability in cancelWhenStarted)
+            {
+                ability.Stop();
+            }
+            
             IEnumerator DoPlayAll()
             {
                 yield return Execute();

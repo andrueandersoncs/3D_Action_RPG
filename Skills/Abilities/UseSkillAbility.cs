@@ -10,20 +10,17 @@ namespace Skills.Abilities
 {
     public class UseSkillAbility : Ability
     {
-        // Inputs
         [Header("Parameters")]
         [FormerlySerializedAs("skill")] public SkillScriptableObject skillScriptableObject;
         public Vector3 target;
         
-        // Dependencies
         [Header("Dependencies")]
         public Animator animator;
         public AttributeStats attributeStats;
         public VitalStats vitalStats;
         public Transform projectileSpawnPoint;
         public TurnTowardLocationAbility turnTowardLocationAbility;
-
-        // State
+        
         private float _cooldownEndTime;
         
         protected override IEnumerator Execute()
@@ -42,7 +39,7 @@ namespace Skills.Abilities
 
         private IEnumerator TurnTowardTarget()
         {
-            turnTowardLocationAbility.objectToTurn = transform;
+            if (skillScriptableObject.prefab == null) yield break;
             turnTowardLocationAbility.location = target;
             yield return turnTowardLocationAbility.Play();
         }
