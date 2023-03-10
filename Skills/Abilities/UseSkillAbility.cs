@@ -1,5 +1,6 @@
 using System.Collections;
 using Abilities;
+using Combat;
 using Movement.Abilities;
 using Stats;
 using Stats.Vitals;
@@ -20,6 +21,7 @@ namespace Skills.Abilities
         public VitalStats vitalStats;
         public Transform projectileSpawnPoint;
         public TurnTowardLocationAbility turnTowardLocationAbility;
+        public CombatGroup combatGroup;
         
         private float _cooldownEndTime;
         
@@ -74,6 +76,11 @@ namespace Skills.Abilities
             var rotationTowardTarget = Quaternion.LookRotation(towardTarget);
             var spawnPosition = projectileSpawnPoint.position + Vector3.ClampMagnitude(towardTarget, skillScriptableObject.range);
             var instance = Instantiate(skillScriptableObject.prefab, spawnPosition, rotationTowardTarget);
+
+            if (instance.TryGetComponent<CombatGroup>(out var instanceCombatGroup))
+            {
+                instanceCombatGroup.group = combatGroup.group;
+            }
             
             if (!instance.TryGetComponent<ApplySkillEffectsAbility>(out var applySkillEffectsAbility)) return;
             applySkillEffectsAbility.target = gameObject;
