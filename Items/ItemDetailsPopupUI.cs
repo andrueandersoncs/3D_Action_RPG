@@ -1,14 +1,14 @@
 using DefaultNamespace;
-using Items;
+using Stats;
 using Stats.DamageTypes;
 using Stats.ResistanceTypes;
 using Stats.Vitals;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Stats
+namespace Items
 {
-    public class ItemStatsUI : MonoBehaviour, IUserInterface
+    public class ItemDetailsPopupUI : MonoBehaviour, IUserInterface
     {
         [Header("Dependencies")]
         public ActionStats actionStats;
