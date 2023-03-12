@@ -16,7 +16,7 @@ namespace Stats
             var statsToggle = root.Q<Toggle>("StatsToggle");
             
             statsToggle.ObserveEveryValueChanged(i => i.value)
-                .Subscribe(v => UserInterface.Toggle(statsVisualElement, v))
+                .Subscribe(v => UserInterface.UserInterfaceUtils.Toggle(statsVisualElement, v))
                 .AddTo(this);
             
             Keybindings.Bind(KeyCode.S, () => statsToggle.value = !statsToggle.value);

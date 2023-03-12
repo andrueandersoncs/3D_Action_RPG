@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace DefaultNamespace
+namespace UserInterface
 {
-    public class UserInterface : MonoBehaviour
+    public class UserInterfaceUtils : MonoBehaviour
     {
         private static VisualElement _root;
 

@@ -85,13 +85,13 @@ namespace Skills.UI
                             bindSkillHotkeyAbility.skill = skill;
                             bindSkillHotkeyAbility.hotkey = keycode;
                             bindSkillHotkeyAbility.Play();
-                            UserInterface.Toggle(skillGridPopover, false);
+                            UserInterface.UserInterfaceUtils.Toggle(skillGridPopover, false);
                         };
                         
                         skillGridPopover.Add(skillItem);
                     }
                     
-                    UserInterface.Toggle(skillGridPopover, true);
+                    UserInterface.UserInterfaceUtils.Toggle(skillGridPopover, true);
                 };
             }
         }

@@ -25,7 +25,7 @@ namespace Skills
             Keybindings.Bind(KeyCode.K, () => toggle.value = !toggle.value);
             
             toggle.ObserveEveryValueChanged(i => i.value)
-                .Subscribe(v => UserInterface.Toggle(visualElement, v))
+                .Subscribe(v => UserInterface.UserInterfaceUtils.Toggle(visualElement, v))
                 .AddTo(this);
             
             var skillPointsText = root.Q<Label>("SkillPoints");

@@ -25,7 +25,7 @@ namespace Inventory
             var inventoryToggle = _uiDocument.rootVisualElement.Q<Toggle>("InventoryToggle");
             inventoryToggle
                 .ObserveEveryValueChanged(i => i.value)
-                .Subscribe(v => UserInterface.Toggle(inventory, v))
+                .Subscribe(v => UserInterface.UserInterfaceUtils.Toggle(inventory, v))
                 .AddTo(this);
             
             Keybindings.Bind(KeyCode.I, () => inventoryToggle.value = !inventoryToggle.value);

@@ -86,7 +86,7 @@ namespace Items
                 visualElement.style.display = DisplayStyle.None;
             }, _visualElement);
             
-            UserInterface.Root.Add(_visualElement);
+            UserInterface.UserInterfaceUtils.Root.Add(_visualElement);
         }
 
         private void AddVitalStats()
@@ -221,7 +221,7 @@ namespace Items
 
         private void OnDestroy()
         {
-            UserInterface.Root.Remove(_visualElement);
+            UserInterface.UserInterfaceUtils.Root.Remove(_visualElement);
         }
 
         public VisualElement GetVisualElement()
