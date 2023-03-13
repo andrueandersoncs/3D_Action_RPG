@@ -55,6 +55,7 @@ namespace Combat.Abilities
 
             foreach (var ability in GetComponents<Ability>())
             {
+                ability.Stop();
                 Destroy(ability);
             }
         }
