@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Abilities;
 using Stats.DamageTypes;
@@ -9,14 +10,24 @@ namespace Combat.Abilities
 {
     public class ReceiveDamageAbility : Ability
     {
+        [Header("Dependencies")]
         public VitalStats vitalStats;
         public ResistanceStats resistanceStats;
         public Animator animator;
         public DieAbility dieAbility;
 
+        [Header("Parameters")]
         public DamageStats damageStatsToReceive;
         
         private static readonly int TakeDamage = Animator.StringToHash("TakeDamage");
+
+        private void OnEnable()
+        {
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
 
         protected override IEnumerator Execute()
         {

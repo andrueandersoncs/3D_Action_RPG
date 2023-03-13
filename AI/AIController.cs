@@ -9,10 +9,34 @@ using UnityEngine;
 
 namespace AI
 {
-    // Melee state
-    // Spell state
-    // Chase state
-    // Roam state
+    /*
+     * Things a monster can do:
+     * - Roam
+     * - Chase / Seek
+     * - Melee Attack
+     * - Ranged Attack
+     * - Cast Spell
+     * - Retreat
+     * - Heal Self
+     * - Heal Ally
+     *
+     * Detectors:
+     * - Enemy In Sight
+     * - Ally In Sight
+     * - Enemy Low Health
+     * - Ally Low Health
+     * - Self Low Health
+     * - Self Low Mana
+     * - Enemy Retreating
+     * - Ally Retreating
+     * - Random Number in Range
+     * - Timer Expiration
+     * - Buff Expiration
+     * - Effect Expiration
+     * 
+     * Conditions:
+     * - And / Or / Not
+     */
     
     public class AIController : MonoBehaviour
     {
