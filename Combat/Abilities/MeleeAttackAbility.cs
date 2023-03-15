@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Abilities;
 using Equipment;
@@ -25,7 +26,15 @@ namespace Combat.Abilities
         private static readonly int RightHandAttack = Animator.StringToHash("RightHandAttack");
 
         private float _lastAttackTime;
-        
+
+        private void Start()
+        {
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
+
         protected override IEnumerator Execute()
         {
             if (enemy.group == combatGroup.group) yield break;

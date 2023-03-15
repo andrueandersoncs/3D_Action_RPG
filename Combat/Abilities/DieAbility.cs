@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Abilities;
 using Inventory.Abilities;
@@ -20,6 +21,14 @@ namespace Combat.Abilities
         public GameObject[] gameObjectsToDeactivate;
         
         private static readonly int Die = Animator.StringToHash("Die");
+
+        private void Start()
+        {
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
 
         protected override IEnumerator Execute()
         {

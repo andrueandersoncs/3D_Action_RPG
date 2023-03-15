@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Abilities;
 using Combat;
@@ -24,7 +25,15 @@ namespace Skills.Abilities
         public CombatGroup combatGroup;
         
         private float _cooldownEndTime;
-        
+
+        private void Start()
+        {
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
+
         protected override IEnumerator Execute()
         {
             if (!RequirementsMet()) yield break;

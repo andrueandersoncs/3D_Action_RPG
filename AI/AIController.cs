@@ -11,14 +11,33 @@ namespace AI
 {
     /*
      * Things a monster can do:
-     * - Roam
-     * - Chase / Seek
+     * - Roam (DONE)
+     * - Seek (DONE)
+     *
      * - Melee Attack
+     * (Instant Damage, Damage Over Time, Status Effect)
+     * 
      * - Ranged Attack
-     * - Cast Spell
-     * - Retreat
+     * (Projectile, Magic projectile, Explosive projectile)
+     * 
+     * - Magic Attack
+     * (Projectile, Area of Effect, Instant Damage, Damage Over Time)
+     * 
+     * - Flee
+     *
      * - Heal Self
+     * (Heal Over Time, Instant Heal)
+     * 
+     * - Buff Self
+     * (Damage Over Time, Damage Reduction, Damage Increase, Health Increase, Health Regeneration)
+     * 
      * - Heal Ally
+     * (Heal Over Time, Instant Heal)
+     * 
+     * - Buff Ally
+     * (Damage Over Time, Damage Reduction, Damage Increase, Health Increase, Health Regeneration)
+     *
+     * ------------------------------------------------------------------------------------------------
      *
      * Detectors:
      * - Enemy In Sight
@@ -34,8 +53,49 @@ namespace AI
      * - Buff Expiration
      * - Effect Expiration
      * 
-     * Conditions:
+     * Combinators:
      * - And / Or / Not
+     *
+     *------------------------------------------------------------------------------------------------
+     * 
+     * Combat Roles:
+     * - Tank
+     * (Behavior: Seek, Melee Attack, Buff Self, Buff Ally)
+     * 
+     * - Healer
+     * (Behavior: Heal Self, Heal Ally, Flee)
+     * 
+     * - Support
+     * (Behavior: Buff Self, Buff Ally, Flee)
+     * 
+     * - Ranged DPS
+     * (Behavior: Seek, Ranged Attack, Flee)
+     * 
+     * - Melee DPS
+     * (Behavior: Seek, Melee Attack, Flee)
+     * 
+     * - Magic DPS
+     * (Behavior: Magic Attack, Flee, Buff Ally)
+     * 
+     * - Summoner
+     * (Behavior: Summon, Flee, Magic Attack)
+     * 
+     * - Crowd Control
+     * (Behavior: Seek, Melee Attack, Flee, Buff Ally)
+     *
+     * ------------------------------------------------------------------------------------------------
+     *
+     * Spell Effects:
+     * - (Elemental) Resistance Buff
+     * - (Elemental) Damage Buff
+     * - Vitals Buff
+     * - ActionStats Buff
+     * - Attributes Buff
+     * 
+     * - Attacks Gain (Elemental) Damage Over Time
+     * - Attacks Gain (Elemental) Area of Effect Damage
+     * - Attacks Cause (Vitals | ActionStats | Attributes) Reduction
+     * - Attacks Cast Spell (Any?)
      */
     
     public class AIController : MonoBehaviour

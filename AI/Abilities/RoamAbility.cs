@@ -7,7 +7,10 @@ namespace AI.Abilities
 {
     public class RoamAbility : Ability
     {
+        [Header("Dependencies")]
         public MoveToDestinationAbility moveToDestinationAbility;
+        
+        [Header("Parameters")]
         public Vector3 origin;
 
         protected override IEnumerator Execute()
@@ -24,7 +27,7 @@ namespace AI.Abilities
         public override void Stop()
         {
             base.Stop();
-            // moveToDestinationAbility.Stop();
+            moveToDestinationAbility.Stop();
         }
     }
 }

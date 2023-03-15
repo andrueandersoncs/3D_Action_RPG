@@ -24,7 +24,15 @@ namespace Movement.Abilities
         
         private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
         private float speed => baseSpeed * (1f + actionStats.FasterRunWalk / 100f);
-        
+
+        private void Start()
+        {
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
+
         protected override IEnumerator Execute()
         {
             var movementReceiver = transform;

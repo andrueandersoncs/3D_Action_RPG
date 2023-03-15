@@ -6,7 +6,10 @@ namespace Movement.Abilities
 {
     public class TurnTowardTargetAbility : Ability
     {
+        [Header("Dependencies")]
         public Transform objectToTurn;
+        
+        [Header("Parameters")]
         public GameObject target;
         
         protected override IEnumerator Execute()

@@ -21,7 +21,7 @@ namespace Combat.Abilities
         
         private static readonly int TakeDamage = Animator.StringToHash("TakeDamage");
 
-        private void OnEnable()
+        private void Start()
         {
             if (animator == null)
             {

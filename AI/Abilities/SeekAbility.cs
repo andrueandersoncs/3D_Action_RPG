@@ -6,10 +6,13 @@ using UnityEngine;
 
 namespace AI.Abilities
 {
-    public class ChaseAbility : Ability
+    public class SeekAbility : Ability
     {
+        [Header("Dependencies")]
         public EnemyDetector enemyDetector;
         public MoveToGameObjectAbility moveToGameObjectAbility;
+        
+        [Header("Parameters")]
         public GameObject enemy;
         
         protected override IEnumerator Execute()

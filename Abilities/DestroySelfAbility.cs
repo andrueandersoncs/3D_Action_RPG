@@ -7,7 +7,7 @@ namespace Abilities
     {
         protected override IEnumerator Execute()
         {
-            // Debug.Log("Destroying self!");
+            Debug.Log("Destroying self!");
             Destroy(gameObject);
             yield break;
         }
